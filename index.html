@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!-- 声明文档类型为HTML5 -->
+<html lang="zh-CN">
+  <!-- 根元素，lang属性指定语言 -->
+  <head>
+    <meta charset="UTF-8" />
+    <!-- 设置字符编码为UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 移动端自适应配置 -->
+    <title></title>
+    <script src="./js/html2canvas.min.js"></script>
+    <!-- 网页标题，显示在浏览器标签页 -->
+    <style>
+      /* 内部CSS样式示例 */
+      body {
+        font-family: Arial, "Microsoft YaHei", "Microsoft Sans Serif",
+          "Microsoft SanSerf", "微软雅黑" !important;
+        font-size: 12px;
+        font-weight: 500;
+        background-color: black;
+        color: azure;
+      }
+      .target {
+        background-color: black;
+        display: inline-block;
+        padding: 5px 10px;
+      }
+      .wrapper {
+        background-color: #102a43;
+        border-radius: 30px;
+        text-align: center;
+        display: inline-block;
+        padding: 2px 10px;
+      }
+      .title {
+        color: #55aac1;
+        display: inline-block;
+      }
+      .text {
+        color: white;
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>增老师说</h1>
+    <input id="myInput"></input>
+    <emoji-picker></emoji-picker>
+    <button onclick="convertToImage()">下载图片</button>
+    <br/>
+    <br/>
+    <div class="target" id="targetDiv">
+      <div class="wrapper">
+        <span class="title">机智の增援:</span>
+        <span class="text" id="mySpan"></span>
+      </div>
+    </div>
+  </body>
+  <script>
+  
+    const inputElement = document.getElementById('myInput');
+    const spanElement = document.getElementById('mySpan');
+
+    // 添加输入事件监听
+    inputElement.addEventListener('input', function(event) {
+      // 直接显示输入值
+      spanElement.textContent = event.target.value;
+      
+    });
+    async function convertToImage() {
+      try {
+        // 1. 使用html2canvas捕获div
+        const canvas = await html2canvas(document.getElementById('targetDiv'), {
+          scale: 2, // 提高图片清晰度
+          useCORS: true, // 允许跨域图片
+          logging: false // 关闭日志
+        });
+        // 2. 创建下载链接
+        const link = document.createElement('a');
+        link.download = 'div-screenshot.png';
+        
+        // 3. 将Canvas转换为DataURL
+        link.href = canvas.toDataURL('image/png');
+        
+        // 4. 触发下载
+        link.click();
+      } catch (error) {
+        console.error('转换失败:', error);
+        alert('图片生成失败，请检查控制台查看详情');
+      }
+    }
+  </script>
+</html>
