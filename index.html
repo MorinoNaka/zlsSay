@@ -1,93 +1,201 @@
 <!DOCTYPE html>
 <!-- 声明文档类型为HTML5 -->
 <html lang="zh-CN">
-  <!-- 根元素，lang属性指定语言 -->
-  <head>
-    <meta charset="UTF-8" />
-    <!-- 设置字符编码为UTF-8 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- 移动端自适应配置 -->
-    <title></title>
-    <script src="./js/html2canvas.min.js"></script>
-    <!-- 网页标题，显示在浏览器标签页 -->
-    <style>
-      /* 内部CSS样式示例 */
-      body {
-        font-family: Arial, "Microsoft YaHei", "Microsoft Sans Serif",
-          "Microsoft SanSerf", "微软雅黑" !important;
-        font-size: 12px;
-        font-weight: 500;
-        background-color: black;
-        color: azure;
-      }
-      .target {
-        background-color: black;
-        display: inline-block;
-        padding: 5px 10px;
-      }
-      .wrapper {
-        background-color: #102a43;
-        border-radius: 30px;
-        text-align: center;
-        display: inline-block;
-        padding: 1px 10px;
-      }
-      .title {
-        color: #55aac1;
-        display: inline-block;
-      }
-      .text {
-        color: white;
-        display: inline-block;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>增老师说</h1>
-    <input id="myInput"></input>
-    <emoji-picker></emoji-picker>
-    <button onclick="convertToImage()">下载图片</button>
-    <br/>
-    <br/>
-    <div class="target" id="targetDiv">
-      <div class="wrapper">
-        <span class="title">机智の增援:</span>
-        <span class="text" id="mySpan"></span>
-      </div>
-    </div>
-  </body>
-  <script>
-  
-    const inputElement = document.getElementById('myInput');
-    const spanElement = document.getElementById('mySpan');
+<!-- 根元素，lang属性指定语言 -->
 
-    // 添加输入事件监听
-    inputElement.addEventListener('input', function(event) {
-      // 直接显示输入值
-      spanElement.textContent = event.target.value;
-      
-    });
-    async function convertToImage() {
-      try {
-        // 1. 使用html2canvas捕获div
-        const canvas = await html2canvas(document.getElementById('targetDiv'), {
-          scale: 2, // 提高图片清晰度
-          useCORS: true, // 允许跨域图片
-          logging: false // 关闭日志
-        });
-        // 2. 创建下载链接
-        const link = document.createElement('a');
-        link.download = 'div-screenshot.png';
-        
-        // 3. 将Canvas转换为DataURL
-        link.href = canvas.toDataURL('image/png');
-        
-        // 4. 触发下载
-        link.click();
-      } catch (error) {
-        console.error('转换失败:', error);
-        alert('图片生成失败，请检查控制台查看详情');
-      }
+<head>
+  <meta charset="UTF-8" />
+  <!-- 设置字符编码为UTF-8 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 移动端自适应配置 -->
+  <title></title>
+  <script src="./js/html2canvas.min.js"></script>
+  <!-- 网页标题，显示在浏览器标签页 -->
+  <style>
+    /* 内部CSS样式示例 */
+    body {
+      font-family: Arial, "Microsoft YaHei", "Microsoft Sans Serif",
+        "Microsoft SanSerf", "微软雅黑" !important;
+      font-size: 12px;
+      font-weight: 500;
+      background-color: black;
+      color: azure;
     }
-  </script>
+
+    .target {
+      background-color: black;
+      display: inline-block;
+      padding: 5px 10px;
+    }
+
+    .wrapper {
+      background-color: #102a43;
+      border-radius: 15px;
+      text-align: left;
+      display: inline-block;
+      padding: 5px 10px;
+    }
+
+    .title {
+      color: #55aac1;
+      display: inline-block;
+    }
+
+    .text {
+      color: white;
+      display: inline-block;
+    }
+
+    .wealth-medal {
+      display: block;
+      width: 36px;
+      height: 16px;
+    }
+
+    .ti {
+      min-width: 190px;
+      height: 20px;
+      position: relative;
+    }
+
+    .admin-icon {
+      height: 17px;
+      width: 13px;
+      line-height: 18px;
+      background-image: url(data:image/png;base64,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);
+      background-repeat: no-repeat;
+      background-size: 100%;
+      position: absolute;
+      top: 4px;
+    }
+
+    .wealth-medal {
+      width: 36px;
+      height: 16px;
+      position: absolute;
+      top: 2px;
+      left: 17px;
+    }
+
+    .medal {
+      position: absolute;
+      top: 2px;
+      left: 56px;
+      border: 1px solid #58A1F8;
+      background-image: linear-gradient(45deg, #4C7DFF99, #4C7DFF99);
+      vertical-align: middle;
+      display: inline-flex;
+      align-items: center;
+      box-sizing: border-box;
+      height: 17px;
+      line-height: 17px;
+      color: #fff;
+      white-space: nowrap;
+      border-radius: 8px;
+      padding: 1px 4px 2px 2px;
+      font-family: "Microsoft YaHei", "Microsoft Sans Serif", "Microsoft SanSerf", "微软雅黑";
+      font-size: 12px;
+      cursor: default;
+    }
+
+    .medal-deco {
+      background-image: url(https://i0.hdslb.com/bfs/live/48360c8f3b7de8031e86ff1ef4a2dfc0ec2a61c2.png@44w_44h.webp);
+      background-size: 100% 100%;
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      left: -3px;
+    }
+
+    .fans-medal-content {
+      align-items: center;
+      justify-content: center;
+      height: 18px;
+      line-height: 18px;
+      margin-right: 2px;
+      color: #FFFFFF;
+      vertical-align: middle;
+      margin-left: 15px;
+      font-size: 9px;
+    }
+
+    .fans-medal-level {
+      font-family: fonteditor, sans-serif;
+      height: 18px;
+      line-height: 18px;
+      color: #FFFFFF;
+    }
+
+    .live-title-cntr {
+      height: 20px;
+      position: absolute;
+      top: 2px;
+      left: 126px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>增老师说</h1>
+  <input id="myInput"></input>
+  <emoji-picker></emoji-picker>
+  <button onclick="convertToImage()">下载图片</button>
+  <br />
+  <br />
+  <div class="target" id="targetDiv">
+    <div class="wrapper">
+      <div class="ti">
+        <div class="admin-icon"></div>
+        <img class="wealth-medal"
+          src="https://i1.hdslb.com/bfs/live/6c8e9dcc45d287ddcacf3ce173adb0e2efae4766.png@80q_54w_24h.webp">
+        <div class="medal">
+          <i class="medal-deco"></i>
+          <div class="fans-medal-content">真牛呀</div>
+          <div class="fans-medal-level">33</div>
+        </div>
+        <img class="live-title-cntr"
+          src="https://i1.hdslb.com/bfs/vc/c3086b5cd2337426aa3a5bae92a54a45905149af.png@100q.webp" />
+      </div>
+      <span class="title">机智の增援:</span>
+      <span class="text" id="mySpan"></span>
+    </div>
+  </div>
+  </div>
+  </div>
+</body>
+<script>
+
+  const inputElement = document.getElementById('myInput');
+  const spanElement = document.getElementById('mySpan');
+
+  // 添加输入事件监听
+  inputElement.addEventListener('input', function (event) {
+    // 直接显示输入值
+    spanElement.textContent = event.target.value;
+
+  });
+  async function convertToImage() {
+    try {
+      // 1. 使用html2canvas捕获div
+      const canvas = await html2canvas(document.getElementById('targetDiv'), {
+        scale: 1, // 提高图片清晰度
+        useCORS: true, // 允许跨域图片
+        logging: false // 关闭日志
+      });
+      // 2. 创建下载链接
+      const link = document.createElement('a');
+      link.download = 'div-screenshot.png';
+
+      // 3. 将Canvas转换为DataURL
+      link.href = canvas.toDataURL('image/png');
+
+      // 4. 触发下载
+      link.click();
+    } catch (error) {
+      console.error('转换失败:', error);
+      alert('图片生成失败，请检查控制台查看详情');
+    }
+  }
+</script>
+
 </html>
